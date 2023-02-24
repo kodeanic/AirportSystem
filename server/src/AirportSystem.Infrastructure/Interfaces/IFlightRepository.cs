@@ -1,5 +1,4 @@
 ﻿using AirportSystem.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace AirportSystem.Infrastructure.Interfaces;
 

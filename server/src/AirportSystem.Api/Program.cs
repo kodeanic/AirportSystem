@@ -14,17 +14,17 @@ builder.Services.AddControllers();
 /* */
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection));
-
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 builder.Services.AddScoped<IFlightService, FlightService>();
-
 builder.Services.AddCors();
 /* */
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
 /* */
 app.UseCors(x => x
                 .AllowAnyMethod()
@@ -32,6 +32,7 @@ app.UseCors(x => x
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials());
 /* */
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

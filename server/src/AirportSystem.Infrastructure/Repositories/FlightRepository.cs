@@ -12,6 +12,11 @@ public class FlightRepository : IFlightRepository
         _db = db;
     }
 
+    public async Task<int> NextIndex()
+    {
+        return await _db.Flight.CountAsync() == 0 ? 1 : await _db.Flight.MaxAsync(x => x.Id) + 1;
+    }
+
     public async Task<bool> Create(Flight entity)
     {
         await _db.Flight.AddAsync(entity);

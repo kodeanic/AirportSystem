@@ -1,6 +1,5 @@
-﻿using AirportSystem.Domain.Entities;
+﻿using AirportSystem.Domain.ViewModels.Flight;
 using AirportSystem.Services.Interfaces;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirportSystem.Api.Controllers;
@@ -19,19 +18,67 @@ public class FlightController : Controller
     public async Task<ActionResult> GetAll()
     {
         var response = await _flightService.GetAll();
-        if(response.StatusCode == Domain.Enums.StatusCode.OK)
+        switch (response.StatusCode)
         {
-            return Ok(response.Data);
+            case Domain.Enums.StatusCode.OK:
+                return Ok(response.Data);
+            case Domain.Enums.StatusCode.NotFound:
+                return NotFound();
+            default:
+                return BadRequest();
         }
+    }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult> Get(int id)
+    {
+        var response = await _flightService.Get(id);
+        switch (response.StatusCode)
+        {
+            case Domain.Enums.StatusCode.OK:
+                return Ok(response.Data);
+            case Domain.Enums.StatusCode.NotFound:
+                return NotFound();
+            default:
+                return BadRequest();
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Create(FlightViewModel flightViewModel)
+    {
+        if(ModelState.IsValid)
+        {
+            var response = await _flightService.Create(flightViewModel);
+            switch (response.StatusCode)
+            {
+                case Domain.Enums.StatusCode.OK:
+                    return Ok(response.Data);
+                default:
+                    return BadRequest();
+            }
+        }
         return BadRequest();
     }
 
-    /*
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Flight>> Get(int id) => Ok(await _flightRepository.Get(id));
+    [HttpPut]
+    public async Task<ActionResult> Edit(FlightViewModel flightViewModel)
+    {
+        return BadRequest();
+    }
 
-    [HttpPost]
-    public async Task<ActionResult> Create(Flight flight) => Ok(await _flightRepository.Create(flight));
-    */
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var response = await _flightService.Delete(id);
+        switch (response.StatusCode)
+        {
+            case Domain.Enums.StatusCode.OK:
+                return Ok(response.Data);
+            case Domain.Enums.StatusCode.NotFound:
+                return NotFound();
+            default:
+                return BadRequest();
+        }
+    }
 }
