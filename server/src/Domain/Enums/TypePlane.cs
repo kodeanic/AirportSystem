@@ -1,4 +1,4 @@
-﻿namespace AirportSystem.Domain.Enums;
+﻿namespace Domain.Enums;
 
 public enum TypePlane
 {
