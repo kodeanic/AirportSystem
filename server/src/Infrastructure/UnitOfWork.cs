@@ -8,12 +8,14 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly ApplicationDbContext _db;
 
+    public IAirplaneRepository Airplanes { get; private set; }
     public IFlightRepository Flights { get; private set; }
 
     public UnitOfWork(ApplicationDbContext db)
     {
         _db = db;
 
+        Airplanes = new AirplaneRepository(_db);
         Flights = new FlightRepository(_db);
     }
 

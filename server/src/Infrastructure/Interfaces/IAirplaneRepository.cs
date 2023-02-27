@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces;
 
-public interface IFlyingRepository : IGenericRepository<Flying>
+public interface IAirplaneRepository : IGenericRepository<Airplane>
 {
 
 }
