@@ -14,7 +14,8 @@ public class AirplaneController : Controller
     public AirplaneController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAirplanes()
+    public async Task<IActionResult> GetAll() => Ok(await _unitOfWork.Airplanes.GetAll());
+    /*
     {
         List<Airplane> airplanes = (List<Airplane>)await _unitOfWork.Airplanes.GetAll();
         List<AirplaneModelView> response = new List<AirplaneModelView>();
@@ -28,6 +29,7 @@ public class AirplaneController : Controller
         }
         return Ok(response);
     }
+    */
 
     [HttpPost]
     public async Task<IActionResult> CreateAirplane(AirplaneModelView airplaneModelView)
@@ -41,6 +43,9 @@ public class AirplaneController : Controller
             };
 
             await _unitOfWork.Airplanes.Create(airplane);
+
+            //await _unitOfWork.
+
             await _unitOfWork.CompleteAsync();
 
             return Ok(airplane.Id);

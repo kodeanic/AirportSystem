@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces;
 
-public interface IGenericRepository<T> where T : IBaseEntity
+public interface IGenericRepository<T> where T : class, IBaseEntity
 {
     Task<IEnumerable<T>> GetAll();
     Task<T> GetById(int id);
