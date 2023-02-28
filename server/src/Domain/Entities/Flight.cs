@@ -13,7 +13,8 @@ public class Flight : IBaseEntity
     [Required]
     public string Company { get; set; }
 
-    public Airplane airplane { get; set; }
+    [Required]
+    public Airplane Airplane { get; set; }
 
     [Required]
     public string DepartureCity { get; set; }
