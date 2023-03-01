@@ -1,12 +1,9 @@
-﻿using Domain.Interfaces;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entities;
+namespace Infrastructure.Dto;
 
-public class Flight : IBaseEntity
+public class FlightDto
 {
-    public int Id { get; set; }
-
     [Required]
     public string Name { get; set; }
 
@@ -14,7 +11,7 @@ public class Flight : IBaseEntity
     public string Company { get; set; }
 
     [Required]
-    public virtual Airplane Airplane { get; set; }
+    public string TypeAirplane { get; set; }
 
     [Required]
     public string DepartureCity { get; set; }
@@ -22,5 +19,6 @@ public class Flight : IBaseEntity
     [Required]
     public string ArriveCity { get; set; }
 
+    [Range(1, int.MaxValue)]
     public decimal Price { get; set; }
 }

@@ -11,6 +11,4 @@ public class Airplane : IBaseEntity
     public string TypeAirplane { get; set; }
     
     public int NumberOfSeats { get; set; }
-
-    public ICollection<Flight> Flights { get; set; }
 }

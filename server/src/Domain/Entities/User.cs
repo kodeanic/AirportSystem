@@ -28,6 +28,4 @@ public class User : IBaseEntity
 
     [EmailAddress]
     public string Email { get; set; }
-
-    public ICollection<Order> Orders { get; set; }
 }

@@ -1,7 +1,8 @@
-﻿using WebApi.Models.ModelViews;
-using Infrastructure.IConfiguration;
+﻿using Infrastructure.IConfiguration;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Entities;
+using AutoMapper;
+using Infrastructure.Dto;
 
 namespace WebApi.Controllers;
 
@@ -10,42 +11,56 @@ namespace WebApi.Controllers;
 public class FlightController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public FlightController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+    public FlightController(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAllFlights()
     {
-        return Ok(await _unitOfWork.Flights.GetAll());
+        var response = await _unitOfWork.Flights.GetAll();
+        return Ok(response.Select(flight => _mapper.Map<FlightDto>(flight)));
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetFlightByName(string name) =>
+        Ok(_mapper.Map<FlightDto>(await _unitOfWork.Flights.GetFlightByName(name)));
+
+    [HttpGet("company/{company}")]
+    public async Task<IActionResult> GetFlightsByCompany(string company)
     {
-        return Ok(await _unitOfWork.Flights.GetById(id));
+        var response = await _unitOfWork.Flights.GetFlightsByCompany(company);
+        return Ok(response.Select(flight => _mapper.Map<FlightDto>(flight)));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateFlight(FlightModelView flightModelView)
+    public async Task<IActionResult> CreateFlight(FlightDto flightDto)
     {
-        if (ModelState.IsValid)
+        var airplaneExist = await _unitOfWork.Airplanes.GetByType(flightDto.TypeAirplane);
+        if (ModelState.IsValid && airplaneExist != null)
         {
-            Flight flight = new Flight
-            {
-                Name = flightModelView.Name,
-                Company = flightModelView.Company,
-                
-                DepartureCity = flightModelView.DepartureCity,
-                ArriveCity = flightModelView.ArriveCity,
-                Price = flightModelView.Price
-            };
+            Flight flight = _mapper.Map<Flight>(flightDto);
+            flight.Airplane = airplaneExist;
 
-            int idResponse = await _unitOfWork.Flights.Create(flight);
+            await _unitOfWork.Flights.Create(flight);
             await _unitOfWork.CompleteAsync();
 
-            return Ok(idResponse);
+            return Ok(flight.Id);
         }
+        return BadRequest();
+    }
 
+    [HttpDelete("{name}")]
+    public async Task<IActionResult> DeleteFlight(string name)
+    {
+        var flightDelete = await _unitOfWork.Flights.GetFlightByName(name);
+        if (flightDelete != null)
+        {
+            await _unitOfWork.Flights.Delete(flightDelete.Id);
+            await _unitOfWork.CompleteAsync();
+
+            return Ok();
+        }
         return BadRequest();
     }
 }

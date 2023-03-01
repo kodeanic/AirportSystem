@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Models.ModelViews;
+namespace Infrastructure.Dto;
 
-public class AirplaneModelView
+public class AirplaneDto
 {
     [Required]
     public string TypeAirplane { get; set; }
 
+    [Range(1, int.MaxValue)]
     public int NumberOfSeats { get; set; }
 }

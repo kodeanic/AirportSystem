@@ -1,7 +1,8 @@
-﻿using Domain.Entities;
+﻿using AutoMapper;
+using Domain.Entities;
+using Infrastructure.Dto;
 using Infrastructure.IConfiguration;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models.ModelViews;
 
 namespace WebApi.Controllers;
 
@@ -10,47 +11,47 @@ namespace WebApi.Controllers;
 public class AirplaneController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public AirplaneController(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+    public AirplaneController(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _unitOfWork.Airplanes.GetAll());
-    /*
+    public async Task<IActionResult> GetAllAirplanes()
     {
-        List<Airplane> airplanes = (List<Airplane>)await _unitOfWork.Airplanes.GetAll();
-        List<AirplaneModelView> response = new List<AirplaneModelView>();
-        foreach (var airplane in airplanes)
-        {
-            response.Add(new AirplaneModelView()
-            {
-                TypeAirplane = airplane.TypeAirplane,
-                NumberOfSeats = airplane.NumberOfSeats
-            });
-        }
-        return Ok(response);
+        var response = await _unitOfWork.Airplanes.GetAll();
+        return Ok(response.Select(airplane => _mapper.Map<AirplaneDto>(airplane)));
     }
-    */
+
+    [HttpGet("{type}")]
+    public async Task<IActionResult> GetAirplaneByType(string type) =>
+        Ok(_mapper.Map<AirplaneDto>(await _unitOfWork.Airplanes.GetByType(type)));
 
     [HttpPost]
-    public async Task<IActionResult> CreateAirplane(AirplaneModelView airplaneModelView)
+    public async Task<IActionResult> CreateAirplane(AirplaneDto airplaneDto)
     {
         if (ModelState.IsValid)
         {
-            Airplane airplane = new Airplane()
-            {
-                TypeAirplane = airplaneModelView.TypeAirplane,
-                NumberOfSeats = airplaneModelView.NumberOfSeats
-            };
+            Airplane airplane = _mapper.Map<Airplane>(airplaneDto);
 
             await _unitOfWork.Airplanes.Create(airplane);
-
-            //await _unitOfWork.
-
             await _unitOfWork.CompleteAsync();
 
             return Ok(airplane.Id);
         }
+        return BadRequest();
+    }
 
+    [HttpDelete("{type}")]
+    public async Task<IActionResult> DeleteAirplane(string type)
+    {
+        var airplaneDelete = await _unitOfWork.Airplanes.GetByType(type);
+        if (airplaneDelete != null)
+        {
+            await _unitOfWork.Airplanes.Delete(airplaneDelete.Id);
+            await _unitOfWork.CompleteAsync();
+
+            return Ok();
+        }
         return BadRequest();
     }
 }

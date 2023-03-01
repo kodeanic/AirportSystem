@@ -9,5 +9,5 @@ public class AirplaneRepository : GenericRepository<Airplane>, IAirplaneReposito
     public AirplaneRepository(ApplicationDbContext db) : base(db) { }
 
     public async Task<Airplane> GetByType(string type) =>
-        await _dbSet.FirstOrDefaultAsync(x => x.TypeAirplane == type);
+        await _dbSet.FirstOrDefaultAsync(x => x.TypeAirplane.ToLower() == type.ToLower());
 }

@@ -8,8 +8,11 @@ public class FlightRepository : GenericRepository<Flight>, IFlightRepository
 {
     public FlightRepository(ApplicationDbContext db) : base(db) { }
 
+    public async Task<Flight> GetFlightByName(string name) =>
+        await _dbSet.Where(f => f.Name.ToLower() == name.ToLower()).FirstOrDefaultAsync();
+
     public async Task<List<Flight>> GetFlightsByCompany(string company) =>
-        await _dbSet.Where(f => f.Company == company).ToListAsync();
+        await _dbSet.Where(f => f.Company.ToLower() == company.ToLower()).ToListAsync();
 
     public async Task<List<Flight>> GetFlightsByDepartureCity(string departureCity) =>
         await _dbSet.Where(f => f.DepartureCity == departureCity).ToListAsync();
