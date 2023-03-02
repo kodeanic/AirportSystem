@@ -17,6 +17,10 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.Flight, o => o.MapFrom(s => s.Flight.Name))
             .ForMember(x => x.Hours, o => o.MapFrom(s => s.Time.Hour))
             .ForMember(x => x.Minutes, o => o.MapFrom(s => s.Time.Minute));
+
+        CreateMap<Booking, BookingDto>()
+            .ForMember(x => x.Flight, o => o.MapFrom(b => b.Schedule.Flight.Name));
+
         // ----
 
         CreateMap<AirplaneDto, Airplane>();

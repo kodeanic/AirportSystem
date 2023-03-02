@@ -11,4 +11,13 @@ public class BookingRepository : GenericRepository<Booking>, IBookingRepository
 
     public async Task<List<Booking>> GetBookingsOnDate(DateOnly date) =>
         await _dbSet.Where(d => d.Date == date).ToListAsync();
+
+    public async Task<List<Booking>> GetBooking_Date_Way(DateOnly date, string departureCity, string arriveCity) =>
+        await _dbSet.Where(b => b.Date == date)
+            .Where(b => b.Schedule.Flight.DepartureCity == departureCity)
+            .Where(b => b.Schedule.Flight.ArriveCity == arriveCity).ToListAsync();
+
+    public async Task<List<Booking>> GetBooking_Date_From(DateOnly date, string departureCity) =>
+        await _dbSet.Where(b => b.Date == date)
+            .Where(b => b.Schedule.Flight.DepartureCity == departureCity).ToListAsync();
 }

@@ -22,6 +22,20 @@ public class ScheduleController : Controller
         return Ok(response.Select(schedule => _mapper.Map<ScheduleDto>(schedule)));
     }
 
+    [HttpGet("ByFlight/{flight}")]
+    public async Task<IActionResult> GetScheduleByFlight(string flight)
+    {
+        var response = await _unitOfWork.Schedules.GetScheduleByFlight(flight);
+        return Ok(response.Select(schedule => _mapper.Map<ScheduleDto>(schedule)));
+    }
+
+    [HttpGet("ByDay/{day}")]
+    public async Task<IActionResult> GetScheduleByWeekDay(DayOfWeek day)
+    {
+        var response = await _unitOfWork.Schedules.GetScheduleByWeekDay(day);
+        return Ok(response.Select(schedule => _mapper.Map<ScheduleDto>(schedule)));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateSchedule(ScheduleDto scheduleDto)
     {

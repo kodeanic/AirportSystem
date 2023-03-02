@@ -22,11 +22,11 @@ public class FlightController : Controller
         return Ok(response.Select(flight => _mapper.Map<FlightDto>(flight)));
     }
 
-    [HttpGet("name/{name}")]
+    [HttpGet("ByName/{name}")]
     public async Task<IActionResult> GetFlightByName(string name) =>
         Ok(_mapper.Map<FlightDto>(await _unitOfWork.Flights.GetFlightByName(name)));
 
-    [HttpGet("company/{company}")]
+    [HttpGet("ByCompany/{company}")]
     public async Task<IActionResult> GetFlightsByCompany(string company)
     {
         var response = await _unitOfWork.Flights.GetFlightsByCompany(company);

@@ -8,11 +8,9 @@ public class ScheduleRepository : GenericRepository<Schedule>, IScheduleReposito
 {
     public ScheduleRepository(ApplicationDbContext db) : base(db) { }
 
-    public async Task<List<Schedule>> GetScheduleByFlight(string flight)
-    {
-        return await _dbSet.Where(s => s.Flight.Name.ToLower() == flight.ToLower()).ToListAsync();
-    }
+    public async Task<List<Schedule>> GetScheduleByFlight(string flight) =>
+        await _dbSet.Where(s => s.Flight.Name.ToLower() == flight.ToLower()).ToListAsync();
 
-    public async Task<List<Schedule>> GetScheduleOnWeekDay(DayOfWeek dayOfWeek) =>
+    public async Task<List<Schedule>> GetScheduleByWeekDay(DayOfWeek dayOfWeek) =>
         await _dbSet.Where(s => s.DayOfWeek == dayOfWeek).ToListAsync();
 }
