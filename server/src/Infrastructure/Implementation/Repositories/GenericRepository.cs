@@ -1,8 +1,8 @@
 ﻿using Domain.Interfaces;
-using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.IRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Implementation.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class, IBaseEntity
 {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Dto;
-using Infrastructure.IConfiguration;
+using Infrastructure.Interfaces.IConfiguration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -32,34 +32,42 @@ public class BookingController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateBooking(CreateBookingDto bookingDto)
     {
-        var respose = await _unitOfWork.Schedules.GetScheduleByFlight(bookingDto.Flight);
-        if (respose.Count > 0)
+        var schedules = await _unitOfWork.Schedules.GetScheduleByFlight(bookingDto.Flight);
+
+        if(schedules.Count == 0)
         {
-            var seats = respose[0].Flight.Airplane.NumberOfSeats;
-            DateOnly startDay = new DateOnly(bookingDto.StartDateYear, bookingDto.StartDateMonth, bookingDto.StartDateDay);
-            DateOnly endDay = new DateOnly(bookingDto.EndDateYear, bookingDto.EndDateMonth, bookingDto.EndDateDay);
-
-            for (DateOnly i = startDay; i <= endDay;)
-            {
-                Console.WriteLine(i.ToString());
-                foreach (var resp in respose)
-                    if (i.DayOfWeek == resp.DayOfWeek)
-                    {
-                        Booking booking = new Booking()
-                        {
-                            Schedule = resp,
-                            Date = i,
-                            FreeSeats = seats
-                        };
-
-                        await _unitOfWork.Bookings.Create(booking);
-                    }
-                i = i.AddDays(1);
-            }
-            await _unitOfWork.CompleteAsync();
-
-            return Ok();
+            return BadRequest();
         }
-        return BadRequest();
+
+        var seats = schedules
+            .First().Flight.Airplane.NumberOfSeats;
+
+        var bookings = new List<Booking>();
+        var datesInterval = new List<DateTime>();
+
+        for (var date = bookingDto.StartDate; date <= bookingDto.EndDate; date = date.AddDays(1)) 
+        {
+            datesInterval.Add(date);
+        }
+
+        foreach(var date in datesInterval)
+        {
+            foreach(var schedule in schedules) 
+            { 
+                if(date.DayOfWeek == schedule.DayOfWeek)
+                {
+                    bookings.Add(new Booking()
+                    {
+                        Schedule = schedule,
+                        Date = DateOnly.FromDateTime(date),
+                        FreeSeats = seats
+                    });
+                }
+            }
+        }
+        await _unitOfWork.Bookings.CreateRange(bookings);
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
     }
 }

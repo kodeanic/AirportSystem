@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces;
 
-namespace Infrastructure.Interfaces;
+namespace Infrastructure.Interfaces.IRepository;
 
 public interface IGenericRepository<T> where T : class, IBaseEntity
 {

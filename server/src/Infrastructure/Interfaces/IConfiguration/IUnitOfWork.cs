@@ -1,6 +1,6 @@
-﻿using Infrastructure.Interfaces;
+﻿using Infrastructure.Interfaces.IRepository;
 
-namespace Infrastructure.IConfiguration;
+namespace Infrastructure.Interfaces.IConfiguration;
 
 public interface IUnitOfWork
 {

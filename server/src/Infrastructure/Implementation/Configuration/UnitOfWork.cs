@@ -1,8 +1,8 @@
-﻿using Infrastructure.IConfiguration;
-using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
+﻿using Infrastructure.Interfaces.IConfiguration;
+using Infrastructure.Interfaces.IRepository;
+using Infrastructure.Implementation.Repositories;
 
-namespace Infrastructure;
+namespace Infrastructure.Implementation.Configuration;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {

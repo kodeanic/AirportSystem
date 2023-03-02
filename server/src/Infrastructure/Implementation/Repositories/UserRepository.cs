@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
-using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.IRepository;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Implementation.Repositories;
 
 public class UserRepository : GenericRepository<User>, IUserRepository
 {

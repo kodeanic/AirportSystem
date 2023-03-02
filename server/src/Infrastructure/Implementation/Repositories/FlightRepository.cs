@@ -1,8 +1,8 @@
 ﻿using Domain.Entities;
-using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.IRepository;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Implementation.Repositories;
 
 public class FlightRepository : GenericRepository<Flight>, IFlightRepository
 {

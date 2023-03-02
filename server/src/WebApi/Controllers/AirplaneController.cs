@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Dto;
-using Infrastructure.IConfiguration;
+using Infrastructure.Interfaces.IConfiguration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;

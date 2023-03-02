@@ -1,5 +1,6 @@
 using Infrastructure;
-using Infrastructure.IConfiguration;
+using Infrastructure.Interfaces.IConfiguration;
+using Infrastructure.Implementation.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

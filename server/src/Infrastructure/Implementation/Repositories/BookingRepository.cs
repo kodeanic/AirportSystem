@@ -1,13 +1,16 @@
 ﻿using Domain.Entities;
-using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace Infrastructure.Repositories;
+namespace Infrastructure.Implementation.Repositories;
 
 public class BookingRepository : GenericRepository<Booking>, IBookingRepository
 {
     public BookingRepository(ApplicationDbContext db) : base(db) { }
+
+    public async Task CreateRange(List<Booking> bookings) =>
+        await _dbSet.AddRangeAsync(bookings);
 
     public async Task<List<Booking>> GetBookingsOnDate(DateOnly date) =>
         await _dbSet.Where(d => d.Date == date).ToListAsync();
