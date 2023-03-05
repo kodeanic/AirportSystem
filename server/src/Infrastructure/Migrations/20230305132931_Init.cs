@@ -68,12 +68,12 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false),
                     Bonuses = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Patronymic = table.Column<string>(type: "text", nullable: false),
-                    Passport = table.Column<string>(type: "text", nullable: false),
-                    Number = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Patronymic = table.Column<string>(type: "text", nullable: true),
+                    Passport = table.Column<string>(type: "text", nullable: true),
+                    Number = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

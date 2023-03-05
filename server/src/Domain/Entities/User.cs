@@ -13,7 +13,7 @@ public class User : IBaseEntity
     [Required]
     public string Password { get; set; }
 
-    public virtual UserInformation Information { get; set; }
+    public virtual UserInformation? Information { get; set; } = new UserInformation();
 
-    public virtual List<CertainFlight> Tickets { get; set; }
+    public virtual List<CertainFlight>? Tickets { get; set; } = new List<CertainFlight>();
 }

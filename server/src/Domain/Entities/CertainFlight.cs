@@ -14,5 +14,5 @@ public class CertainFlight : IBaseEntity
 
     public int FreeSeats { get; set; }
 
-    public virtual List<User> Passengers { get; set; }
+    public virtual List<User> Passengers { get; set; } = new List<User>();
 }

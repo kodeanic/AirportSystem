@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230305111230_Init")]
+    [Migration("20230305132931_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -174,27 +174,21 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Number")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Passport")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Patronymic")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -263,8 +257,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.Navigation("Information")
-                        .IsRequired();
+                    b.Navigation("Information");
                 });
 #pragma warning restore 612, 618
         }

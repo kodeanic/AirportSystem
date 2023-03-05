@@ -18,7 +18,7 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.Hours, o => o.MapFrom(s => s.Time.Hour))
             .ForMember(x => x.Minutes, o => o.MapFrom(s => s.Time.Minute));
 
-        //
+        CreateMap<User, UserDto>();
 
         // ----
 
@@ -30,5 +30,7 @@ public class AutoMapperProfile : Profile
         CreateMap<ScheduleDto, Schedule>()
             .ForMember(x => x.Flight, o => o.Ignore())
             .ForMember(x => x.Time, o => o.Ignore());
+
+        CreateMap<UserDto, User>();
     }
 }

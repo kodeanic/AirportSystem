@@ -6,6 +6,7 @@ namespace Domain.Entities;
 
 public class UserInformation : IBaseEntity
 {
+    [Key]
     [ForeignKey("User")]
     public int Id { get; set; }
 
@@ -13,17 +14,17 @@ public class UserInformation : IBaseEntity
 
     public int Bonuses { get; set; }
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
-    public string Patronymic { get; set; }
+    public string? Patronymic { get; set; }
 
-    public string Passport { get; set; }
+    public string? Passport { get; set; }
 
     [Phone]
-    public string Number { get; set; }
+    public string? Number { get; set; }
 
     [EmailAddress]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 }
