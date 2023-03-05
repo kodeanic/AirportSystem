@@ -7,9 +7,9 @@ public interface IUnitOfWork
     IAirplaneRepository Airplanes { get; }
     IFlightRepository Flights { get; }
     IScheduleRepository Schedules { get; }
-    IBookingRepository Bookings { get; }
     IUserRepository Users { get; }
-    IOrderRepository Orders { get; }
+    IUserInformationRepository UserInformations { get; }
+    ICertainFlightRepository CertainFlights { get; }
 
     Task CompleteAsync();
 }

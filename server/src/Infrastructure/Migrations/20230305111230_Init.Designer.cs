@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230228131702_Init")]
+    [Migration("20230305111230_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,21 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("CertainFlightUser", b =>
+                {
+                    b.Property<int>("PassengersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TicketsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PassengersId", "TicketsId");
+
+                    b.HasIndex("TicketsId");
+
+                    b.ToTable("CertainFlightUser");
+                });
 
             modelBuilder.Entity("Domain.Entities.Airplane", b =>
                 {
@@ -44,7 +59,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Airplanes");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Booking", b =>
+            modelBuilder.Entity("Domain.Entities.CertainFlight", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +80,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("CertainFlights");
                 });
 
             modelBuilder.Entity("Domain.Entities.Flight", b =>
@@ -105,29 +120,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Flights");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BookingId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
             modelBuilder.Entity("Domain.Entities.Schedule", b =>
                 {
                     b.Property<int>("Id")
@@ -160,6 +152,24 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserInformation", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Bonuses")
                         .HasColumnType("integer");
 
@@ -168,10 +178,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -187,23 +193,34 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Patronymic")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("UserInformations");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Booking", b =>
+            modelBuilder.Entity("CertainFlightUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("PassengersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.CertainFlight", null)
+                        .WithMany()
+                        .HasForeignKey("TicketsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.CertainFlight", b =>
                 {
                     b.HasOne("Domain.Entities.Schedule", "Schedule")
-                        .WithMany("Bookings")
+                        .WithMany()
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -214,7 +231,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Flight", b =>
                 {
                     b.HasOne("Domain.Entities.Airplane", "Airplane")
-                        .WithMany("Flights")
+                        .WithMany()
                         .HasForeignKey("AirplaneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -222,29 +239,10 @@ namespace Infrastructure.Migrations
                     b.Navigation("Airplane");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Order", b =>
-                {
-                    b.HasOne("Domain.Entities.Booking", "Booking")
-                        .WithMany("Orders")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Domain.Entities.Schedule", b =>
                 {
                     b.HasOne("Domain.Entities.Flight", "Flight")
-                        .WithMany("Timetable")
+                        .WithMany()
                         .HasForeignKey("FlightId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -252,29 +250,21 @@ namespace Infrastructure.Migrations
                     b.Navigation("Flight");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Airplane", b =>
+            modelBuilder.Entity("Domain.Entities.UserInformation", b =>
                 {
-                    b.Navigation("Flights");
-                });
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithOne("Information")
+                        .HasForeignKey("Domain.Entities.UserInformation", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Domain.Entities.Booking", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Flight", b =>
-                {
-                    b.Navigation("Timetable");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Schedule", b =>
-                {
-                    b.Navigation("Bookings");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("Information")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities;
 
-public class Booking : IBaseEntity
+public class CertainFlight : IBaseEntity
 {
     public int Id { get; set; }
 
@@ -13,4 +13,6 @@ public class Booking : IBaseEntity
     public DateOnly Date { get; set; }
 
     public int FreeSeats { get; set; }
+
+    public virtual List<User> Passengers { get; set; }
 }

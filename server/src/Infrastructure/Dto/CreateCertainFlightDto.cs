@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Dto;
 
-public class CreateBookingDto
+public class CreateCertainFlightDto
 {
     [Required]
     public string Flight { get; set; }

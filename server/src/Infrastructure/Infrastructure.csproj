@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Implementation\Service\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

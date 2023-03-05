@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace Infrastructure.Dto;
 
-namespace Infrastructure.Dto;
-
-public class BookingDto
+public class GetCertainFlightDto
 {
-    
     public string Flight { get; set; }
 
     public DateOnly Date { get; set; }

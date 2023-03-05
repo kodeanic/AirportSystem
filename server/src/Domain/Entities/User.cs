@@ -13,19 +13,7 @@ public class User : IBaseEntity
     [Required]
     public string Password { get; set; }
 
-    public int Bonuses { get; set; }
+    public virtual UserInformation Information { get; set; }
 
-    public string Name { get; set; }
-
-    public string LastName { get; set; }
-
-    public string Patronymic { get; set; }
-
-    public string Passport { get; set; }
-
-    [Phone]
-    public string Number { get; set; }
-
-    [EmailAddress]
-    public string Email { get; set; }
+    public virtual List<CertainFlight> Tickets { get; set; }
 }

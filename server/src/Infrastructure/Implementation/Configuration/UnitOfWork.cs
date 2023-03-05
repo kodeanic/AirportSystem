@@ -11,9 +11,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public IAirplaneRepository Airplanes { get; private set; }
     public IFlightRepository Flights { get; private set; }
     public IScheduleRepository Schedules { get; private set; }
-    public IBookingRepository Bookings { get; private set; }
     public IUserRepository Users { get; private set; }
-    public IOrderRepository Orders { get; private set; }
+    public IUserInformationRepository UserInformations { get; private set; }
+    public ICertainFlightRepository CertainFlights { get; private set; }
 
     public UnitOfWork(ApplicationDbContext db)
     {
@@ -22,9 +22,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         Airplanes = new AirplaneRepository(_db);
         Flights = new FlightRepository(_db);
         Schedules = new ScheduleRepository(_db);
-        Bookings = new BookingRepository(_db);
         Users = new UserRepository(_db);
-        Orders = new OrderRepository(_db);
+        UserInformations = new UserInformationRepository(_db);
+        CertainFlights = new CertainFlightRepository(_db);
     }
 
     public async Task CompleteAsync()

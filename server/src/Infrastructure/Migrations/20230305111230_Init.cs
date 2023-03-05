@@ -31,14 +31,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Login = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Bonuses = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Patronymic = table.Column<string>(type: "text", nullable: false),
-                    Passport = table.Column<string>(type: "text", nullable: false),
-                    Number = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false)
+                    Password = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,6 +63,30 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserInformations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false),
+                    Bonuses = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    Patronymic = table.Column<string>(type: "text", nullable: false),
+                    Passport = table.Column<string>(type: "text", nullable: false),
+                    Number = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserInformations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserInformations_Users_Id",
+                        column: x => x.Id,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Schedules",
                 columns: table => new
                 {
@@ -91,7 +108,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookings",
+                name: "CertainFlights",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -102,9 +119,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.PrimaryKey("PK_CertainFlights", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Schedules_ScheduleId",
+                        name: "FK_CertainFlights_Schedules_ScheduleId",
                         column: x => x.ScheduleId,
                         principalTable: "Schedules",
                         principalColumn: "Id",
@@ -112,50 +129,43 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "CertainFlightUser",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    BookingId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    PassengersId = table.Column<int>(type: "integer", nullable: false),
+                    TicketsId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_CertainFlightUser", x => new { x.PassengersId, x.TicketsId });
                     table.ForeignKey(
-                        name: "FK_Orders_Bookings_BookingId",
-                        column: x => x.BookingId,
-                        principalTable: "Bookings",
+                        name: "FK_CertainFlightUser_CertainFlights_TicketsId",
+                        column: x => x.TicketsId,
+                        principalTable: "CertainFlights",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_CertainFlightUser_Users_PassengersId",
+                        column: x => x.PassengersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ScheduleId",
-                table: "Bookings",
+                name: "IX_CertainFlights_ScheduleId",
+                table: "CertainFlights",
                 column: "ScheduleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CertainFlightUser_TicketsId",
+                table: "CertainFlightUser",
+                column: "TicketsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Flights_AirplaneId",
                 table: "Flights",
                 column: "AirplaneId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_BookingId",
-                table: "Orders",
-                column: "BookingId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId",
-                table: "Orders",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Schedules_FlightId",
@@ -166,10 +176,13 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "CertainFlightUser");
 
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "UserInformations");
+
+            migrationBuilder.DropTable(
+                name: "CertainFlights");
 
             migrationBuilder.DropTable(
                 name: "Users");

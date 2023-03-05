@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Domain.Entities;
-using Infrastructure.Dto;
 using Infrastructure.Interfaces.IConfiguration;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,13 +6,13 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BookingController : Controller
+public class CertainFlightController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public BookingController(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
-
+    public CertainFlightController(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
+    /*
     [HttpGet]
     public async Task<IActionResult> GetAllBookings()
     {
@@ -34,7 +32,7 @@ public class BookingController : Controller
     {
         var schedules = await _unitOfWork.Schedules.GetByFlight(bookingDto.Flight);
 
-        if(schedules.Count == 0)
+        if (schedules.Count == 0)
         {
             return BadRequest();
         }
@@ -44,16 +42,16 @@ public class BookingController : Controller
         var bookings = new List<Booking>();
         var datesInterval = new List<DateTime>();
 
-        for (var date = bookingDto.StartDate; date <= bookingDto.EndDate; date = date.AddDays(1)) 
+        for (var date = bookingDto.StartDate; date <= bookingDto.EndDate; date = date.AddDays(1))
         {
             datesInterval.Add(date);
         }
 
-        foreach(var date in datesInterval)
+        foreach (var date in datesInterval)
         {
-            foreach(var schedule in schedules) 
-            { 
-                if(date.DayOfWeek == schedule.DayOfWeek)
+            foreach (var schedule in schedules)
+            {
+                if (date.DayOfWeek == schedule.DayOfWeek)
                 {
                     bookings.Add(new Booking()
                     {
@@ -70,4 +68,5 @@ public class BookingController : Controller
 
         return Ok();
     }
+    */
 }
