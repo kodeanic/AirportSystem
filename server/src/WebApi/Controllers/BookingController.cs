@@ -22,7 +22,7 @@ public class BookingController : Controller
         return Ok(response.Select(booking => _mapper.Map<BookingDto>(booking)));
     }
 
-    [HttpGet("/Tickets")]
+    [HttpGet("Tickets")]
     public async Task<IActionResult> GetTickets(DateOnly date, string departureCity, string arriveCity)
     {
         var response = await _unitOfWork.Bookings.GetBooking_Date_Way(date, departureCity, arriveCity);
@@ -32,15 +32,14 @@ public class BookingController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateBooking(CreateBookingDto bookingDto)
     {
-        var schedules = await _unitOfWork.Schedules.GetScheduleByFlight(bookingDto.Flight);
+        var schedules = await _unitOfWork.Schedules.GetByFlight(bookingDto.Flight);
 
         if(schedules.Count == 0)
         {
             return BadRequest();
         }
 
-        var seats = schedules
-            .First().Flight.Airplane.NumberOfSeats;
+        var seats = schedules.First().Flight.Airplane.NumberOfSeats;
 
         var bookings = new List<Booking>();
         var datesInterval = new List<DateTime>();
@@ -65,6 +64,7 @@ public class BookingController : Controller
                 }
             }
         }
+
         await _unitOfWork.Bookings.CreateRange(bookings);
         await _unitOfWork.CompleteAsync();
 

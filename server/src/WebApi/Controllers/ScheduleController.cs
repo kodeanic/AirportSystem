@@ -25,48 +25,72 @@ public class ScheduleController : Controller
     [HttpGet("ByFlight/{flight}")]
     public async Task<IActionResult> GetScheduleByFlight(string flight)
     {
-        var response = await _unitOfWork.Schedules.GetScheduleByFlight(flight);
+        var response = await _unitOfWork.Schedules.GetByFlight(flight);
         return Ok(response.Select(schedule => _mapper.Map<ScheduleDto>(schedule)));
     }
 
     [HttpGet("ByDay/{day}")]
     public async Task<IActionResult> GetScheduleByWeekDay(DayOfWeek day)
     {
-        var response = await _unitOfWork.Schedules.GetScheduleByWeekDay(day);
+        var response = await _unitOfWork.Schedules.GetByWeekDay(day);
         return Ok(response.Select(schedule => _mapper.Map<ScheduleDto>(schedule)));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateSchedule(ScheduleDto scheduleDto)
     {
-        var flightExist = await _unitOfWork.Flights.GetFlightByName(scheduleDto.Flight);
-        if (ModelState.IsValid && flightExist != null)
+        var flight = await _unitOfWork.Flights.GetByName(scheduleDto.Flight);
+
+        if (!ModelState.IsValid || flight == null)
         {
-            Schedule schedule = _mapper.Map<Schedule>(scheduleDto);
-            schedule.Flight = flightExist;
-            schedule.Time = new TimeOnly(scheduleDto.Hours, scheduleDto.Minutes);
-
-            await _unitOfWork.Schedules.Create(schedule);
-            await _unitOfWork.CompleteAsync();
-
-            return Ok(schedule.Id);
+            return BadRequest();
         }
-        return BadRequest();
+
+        Schedule schedule = _mapper.Map<Schedule>(scheduleDto);
+        schedule.Flight = flight;
+        schedule.Time = new TimeOnly(scheduleDto.Hours, scheduleDto.Minutes);
+
+        await _unitOfWork.Schedules.Create(schedule);
+        await _unitOfWork.CompleteAsync();
+
+        return Ok(schedule.Id);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateSchedule(ScheduleDto scheduleDto)
+    {
+        var schedule = (await _unitOfWork.Schedules.GetByFlight(scheduleDto.Flight))
+            .Where(s => s.DayOfWeek == scheduleDto.DayOfWeek).FirstOrDefault();
+
+        if (!ModelState.IsValid || schedule == null)
+        {
+            return BadRequest();
+        }
+
+        schedule.Time = new TimeOnly(scheduleDto.Hours, scheduleDto.Minutes);
+
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
     }
 
     [HttpDelete("{flight}")]
     public async Task<IActionResult> DeleteSchedule(string flight)
     {
-        var schedulesDelete = await _unitOfWork.Schedules.GetScheduleByFlight(flight);
-        if (schedulesDelete.Count > 0)
+        var schedulesDelete = await _unitOfWork.Schedules.GetByFlight(flight);
+
+        if (schedulesDelete.Count == 0)
         {
-            foreach (var schedule in schedulesDelete)
-            {
-                await _unitOfWork.Schedules.Delete(schedule.Id);
-                await _unitOfWork.CompleteAsync();
-            }
-            return Ok();
+            return BadRequest();
         }
-        return BadRequest();
+
+        foreach (var schedule in schedulesDelete)
+        {
+            await _unitOfWork.Schedules.Delete(schedule.Id);
+        }
+
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
     }
 }

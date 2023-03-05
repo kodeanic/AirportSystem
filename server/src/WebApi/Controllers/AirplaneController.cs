@@ -29,29 +29,49 @@ public class AirplaneController : Controller
     [HttpPost]
     public async Task<IActionResult> CreateAirplane(AirplaneDto airplaneDto)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            Airplane airplane = _mapper.Map<Airplane>(airplaneDto);
-
-            await _unitOfWork.Airplanes.Create(airplane);
-            await _unitOfWork.CompleteAsync();
-
-            return Ok(airplane.Id);
+            return BadRequest();
         }
-        return BadRequest();
+
+        Airplane airplane = _mapper.Map<Airplane>(airplaneDto);
+
+        await _unitOfWork.Airplanes.Create(airplane);
+        await _unitOfWork.CompleteAsync();
+
+        return Ok(airplane.Id);
     }
 
+    [HttpPut]
+    public async Task<IActionResult> UpdateAirplane(AirplaneDto airplaneDto)
+    {
+        var airplane = await _unitOfWork.Airplanes.GetByType(airplaneDto.TypeAirplane);
+
+        if (!ModelState.IsValid || airplane == null)
+        {
+            return BadRequest();
+        }
+
+        airplane.NumberOfSeats = airplaneDto.NumberOfSeats;
+
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
+    }
+    
     [HttpDelete("{type}")]
     public async Task<IActionResult> DeleteAirplane(string type)
     {
-        var airplaneDelete = await _unitOfWork.Airplanes.GetByType(type);
-        if (airplaneDelete != null)
-        {
-            await _unitOfWork.Airplanes.Delete(airplaneDelete.Id);
-            await _unitOfWork.CompleteAsync();
+        var airplane = await _unitOfWork.Airplanes.GetByType(type);
 
-            return Ok();
+        if (airplane == null)
+        {
+            return BadRequest();
         }
-        return BadRequest();
+
+        await _unitOfWork.Airplanes.Delete(airplane.Id);
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
     }
 }

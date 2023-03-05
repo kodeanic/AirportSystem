@@ -22,15 +22,5 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class, IBase
         return entity.Id;
     }
 
-    public virtual Task Update(T entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public virtual async Task Delete(int id)
-    {
-        var existingFlight = await _dbSet.Where(x => x.Id == id).FirstOrDefaultAsync();
-        if (existingFlight != null)
-            _dbSet.Remove(existingFlight);
-    }
+    public virtual async Task Delete(int id) => _dbSet.Remove(await _dbSet.Where(x => x.Id == id).FirstAsync());
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
 using Domain.Entities;
-using AutoMapper;
 using Infrastructure.Dto;
 using Infrastructure.Interfaces.IConfiguration;
+using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace WebApi.Controllers;
 
@@ -24,43 +25,69 @@ public class FlightController : Controller
 
     [HttpGet("ByName/{name}")]
     public async Task<IActionResult> GetFlightByName(string name) =>
-        Ok(_mapper.Map<FlightDto>(await _unitOfWork.Flights.GetFlightByName(name)));
+        Ok(_mapper.Map<FlightDto>(await _unitOfWork.Flights.GetByName(name)));
 
     [HttpGet("ByCompany/{company}")]
     public async Task<IActionResult> GetFlightsByCompany(string company)
     {
-        var response = await _unitOfWork.Flights.GetFlightsByCompany(company);
+        var response = await _unitOfWork.Flights.GetByCompany(company);
         return Ok(response.Select(flight => _mapper.Map<FlightDto>(flight)));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateFlight(FlightDto flightDto)
     {
-        var airplaneExist = await _unitOfWork.Airplanes.GetByType(flightDto.TypeAirplane);
-        if (ModelState.IsValid && airplaneExist != null)
+        var airplane = await _unitOfWork.Airplanes.GetByType(flightDto.TypeAirplane);
+
+        if (!ModelState.IsValid || airplane == null)
         {
-            Flight flight = _mapper.Map<Flight>(flightDto);
-            flight.Airplane = airplaneExist;
-
-            await _unitOfWork.Flights.Create(flight);
-            await _unitOfWork.CompleteAsync();
-
-            return Ok(flight.Id);
+            return BadRequest();
         }
-        return BadRequest();
+
+        Flight flight = _mapper.Map<Flight>(flightDto);
+        flight.Airplane = airplane;
+
+        await _unitOfWork.Flights.Create(flight);
+        await _unitOfWork.CompleteAsync();
+
+        return Ok(flight.Id);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateFlight(FlightDto flightDto)
+    {
+        var flight = await _unitOfWork.Flights.GetByName(flightDto.Name);
+        var airplane = await _unitOfWork.Airplanes.GetByType(flightDto.TypeAirplane);
+
+        if (!ModelState.IsValid || flight == null || airplane == null)
+        {
+            return BadRequest();
+        }
+
+        flight.Company = flightDto.Company;
+        flight.Airplane = airplane;
+        flight.DepartureCity = flightDto.DepartureCity;
+        flight.ArriveCity = flightDto.ArriveCity;
+        flight.Price = flightDto.Price;
+
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
     }
 
     [HttpDelete("{name}")]
     public async Task<IActionResult> DeleteFlight(string name)
     {
-        var flightDelete = await _unitOfWork.Flights.GetFlightByName(name);
-        if (flightDelete != null)
-        {
-            await _unitOfWork.Flights.Delete(flightDelete.Id);
-            await _unitOfWork.CompleteAsync();
+        var flight = await _unitOfWork.Flights.GetByName(name);
 
-            return Ok();
+        if (flight == null)
+        {
+            return BadRequest();
         }
-        return BadRequest();
+
+        await _unitOfWork.Flights.Delete(flight.Id);
+        await _unitOfWork.CompleteAsync();
+
+        return Ok();
     }
 }
